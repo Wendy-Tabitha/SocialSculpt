@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Realtime Forum</title>
+    <link rel="stylesheet" href="../static/css/style.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body>
+    <!-- Auth Container (shown by default) -->
+    <div id="auth-container" class="auth-container">
+        <div class="auth-content">
+            <div class="auth-header">
+                <img src="../static/img/forum.png" alt="Forum Logo" class="auth-logo">
+                <h2>Welcome to Realtime Forum</h2>
+                <p class="auth-subtitle">Please login or register to continue</p>
+            </div>
+            
+            <div class="auth-tabs">
+                <button class="tab-btn active" id="login-tab">Login</button>
+                <button class="tab-btn" id="register-tab">Register</button>
+            </div>
+            
+            <!-- Login Form -->
+            <form id="login-form" class="auth-form">
+                <div class="form-group">
+                    <i class="material-icons">person</i>
+                    <input type="text" placeholder="Email or Nickname" name="login" required>
+                </div>
+                <div class="form-group">
+                    <i class="material-icons">lock</i>
+                    <input type="password" placeholder="Password" name="password" required>
+                </div>
+                <button type="submit" class="auth-submit-btn">Login</button>
+            </form>
+
+            <!-- Register Form -->
+            <form id="register-form" class="auth-form" style="display: none;">
+                <div class="form-group">
+                    <i class="material-icons">person</i>
+                    <input type="text" placeholder="Nickname" name="nickname" required>
+                </div>
+                <div class="form-group">
+                    <i class="material-icons">cake</i>
+                    <input type="number" placeholder="Age" name="age" required>
+                </div>
+                <div class="form-group">
+                    <i class="material-icons">people</i>
+                    <select name="gender" required>
+                        <option value="">Select Gender</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <i class="material-icons">person_outline</i>
+                    <input type="text" placeholder="First Name" name="firstName" required>
+                </div>
+                <div class="form-group">
+                    <i class="material-icons">person_outline</i>
+                    <input type="text" placeholder="Last Name" name="lastName" required>
+                </div>
+                <div class="form-group">
+                    <i class="material-icons">email</i>
+                    <input type="email" placeholder="Email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <i class="material-icons">lock</i>
+                    <input type="password" placeholder="Password" name="password" required>
+                </div>
+                <button type="submit" class="auth-submit-btn">Register</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main App Container (hidden by default) -->
+    <div id="main-app" style="display: none;">
+        <!-- Header -->
+        <header class="main-header">
+            <div class="header-left">
+                <img src="../static/img/forum.png" class="header-logo">
+                <div class="header-search">
+                    <i class="material-icons">search</i>
+                    <input type="text" placeholder="Search Forum">
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="header-icons">
+                    <div class="icon-badge">
+                        <i class="material-icons">mail</i>
+                        <span class="badge">4</span>
+                    </div>
+                    <div class="icon-badge">
+                        <i class="material-icons">notifications</i>
+                        <span class="badge">3</span>
+                    </div>
+                </div>
+                <div class="user-profile">
+                    <img src="../static/img/avatar.jpeg" class="profile-img">
+                </div>
+            </div>
+        </header>
+
+        <div class="app">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <nav class="nav-menu">
+                    <a href="#" class="nav-item active">
+                        <i class="material-icons">home</i>
+                        <span>Home</span>
+                    </a>
+                    <a href="#" class="nav-item create-post-btn">
+                        <i class="material-icons">add_circle</i>
+                        <span>Create Post</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <i class="material-icons">people</i>
+                        <span>People</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <i class="material-icons">event</i>
+                        <span>Event</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <i class="material-icons">pages</i>
+                        <span>Pages</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <i class="material-icons">group</i>
+                        <span>Group</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <i class="material-icons">store</i>
+                        <span>Marketplace</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <i class="material-icons">bookmark</i>
+                        <span>Saved</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <i class="material-icons">favorite</i>
+                        <span>Favorites</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <i class="material-icons">settings</i>
+                        <span>Settings</span>
+                    </a>
+                    <a href="#" class="nav-item logout-btn" style="margin-top: auto;">
+                        <i class="material-icons">logout</i>
+                        <span>Logout</span>
+                    </a>
+                </nav>
+            </div>
+
+            <!-- Main Content -->
+            <div class="main-content">
+                <!-- Stories Section -->
+                <div class="stories-section">
+                    <div class="story-card add-story">
+                        <div class="add-story-button">
+                            <i class="material-icons">add</i>
+                        </div>
+                        <span>Add Story</span>
+                    </div>
+                    <!-- Story cards will be added here dynamically -->
+                </div>
+
+            <!-- Post Creation -->
+            <div class="post-creation">
+                <div class="post-input">
+                    <img src="../static/img/avatar.jpeg" alt="" class="user-avatar" id="current-user-avatar">
+                    <input type="text" placeholder="Write something...">
+                </div>
+                <div class="post-actions">
+                    <button class="action-btn">
+                        <i class="material-icons">videocam</i>
+                        Live
+                    </button>
+                    <button class="action-btn">
+                        <i class="material-icons">photo_camera</i>
+                        Photo/Video
+                    </button>
+                    <button class="action-btn">
+                        <i class="material-icons">mood</i>
+                        Feeling/Activity
+                    </button>
+                </div>
+            </div>
+
+                <!-- Posts Feed -->
+                <div class="posts-feed" id="posts-container">
+                    <!-- Posts will be added here dynamically -->
+                </div>
+            </div>
+
+            <!-- Right Sidebar -->
+            <div class="right-sidebar">
+                <!-- Friend Requests -->
+                <div class="friend-requests">
+                    <h3>Requests <span class="request-count">2</span></h3>
+                    <div class="request-list">
+                        <!-- Friend requests will be added here dynamically -->
+                    </div>
+                </div>
+
+                <!-- Contacts -->
+                <div class="contacts">
+                    <h3>Contacts</h3>
+                    <div class="contact-list">
+                        <!-- Contacts will be added here dynamically -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Options Menu -->
+    <div class="contact-options-menu" style="display: none;">
+        <div class="menu-content">
+            <button class="menu-item follow-btn">
+                <i class="material-icons">person_add</i>
+                <span>Follow</span>
+            </button>
+            <button class="menu-item hide-btn">
+                <i class="material-icons">visibility_off</i>
+                <span>Hide Contact</span>
+            </button>
+        </div>
+    </div>
+
+    <script src="../static/js/main.js"></script>
+</body>
+</html> 
