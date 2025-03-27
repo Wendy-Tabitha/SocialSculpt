@@ -131,3 +131,26 @@ const mainAppHTML = `
 `;
 
 document.getElementById('main-app').innerHTML = mainAppHTML;
+
+// Add logout functionality
+document.querySelector('.logout-btn').addEventListener('click', async (e) => {
+    e.preventDefault();
+    
+    try {
+        const response = await fetch('/api/logout', {
+            method: 'POST',
+            credentials: 'include' // Important: This ensures cookies are sent with the request
+        });
+
+        if (response.ok) {
+            // Redirect to login page after successful logout
+            window.location.href = '/';
+        } else {
+            console.error('Logout failed');
+        }
+    } catch (error) {
+        console.error('Error during logout:', error);
+        // Still redirect to login page even if there's an error
+        window.location.href = '/login';
+    }
+});

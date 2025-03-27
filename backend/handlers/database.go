@@ -61,6 +61,18 @@ func InitDB() {
 	if err != nil {
 		log.Fatal("Error creating messages table: ", err)
 	}
+
+	// Create sessions table
+	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS sessions (
+		id TEXT PRIMARY KEY,
+		user_id INTEGER,
+		expires_at DATETIME,
+		created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+		FOREIGN KEY (user_id) REFERENCES users(id)
+	)`)
+	if err != nil {
+		log.Fatal("Error creating sessions table: ", err)
+	}
 }
 
 // GetDB returns the database connection
