@@ -6,8 +6,7 @@ import (
 
 	"realtime-forum/backend/handlers"
 	"realtime-forum/backend/wbsocket"
-
-	_ "github.com/mattn/go-sqlite3"
+	// _ "github.com/mattn/go-sqlite3"
 )
 
 func main() {
@@ -27,6 +26,7 @@ func main() {
 	http.HandleFunc("/ws", wbsocket.HandleConnections)
 	http.HandleFunc("/api/register", handlers.HandleRegister)
 	http.HandleFunc("/api/login", handlers.HandleLogin)
+	http.HandleFunc("/api/logout", handlers.HandleLogout)
 	http.HandleFunc("/api/posts", handlers.HandlePosts)
 
 	log.Println("Server starting on http://localhost:8080")
