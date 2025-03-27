@@ -3,7 +3,9 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
+	"time"
 
+	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -79,8 +81,33 @@ func HandleLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Create session token
-	// In a real application, you would create a proper session token here
+	// Generate a unique session ID using UUID
+	sessionID := uuid.New().String()
+
+	// Set session expiration to 24 hours from now
+	expiresAt := time.Now().Add(24 * time.Hour)
+
+	// Store session in database
+	_, err = db.Exec(`
+		INSERT INTO sessions (id, user_id, expires_at)
+		VALUES (?, ?, ?)`,
+		sessionID, user.ID, expiresAt)
+	if err != nil {
+		http.Error(w, "Error creating session", http.StatusInternalServerError)
+		return
+	}
+
+	// Set session cookie
+	cookie := &http.Cookie{
+		Name:     "session_id",
+		Value:    sessionID,
+		Expires:  expiresAt,
+		HttpOnly: true,
+		Secure:   true, // Enable in production with HTTPS
+		SameSite: http.SameSiteStrictMode,
+		Path:     "/",
+	}
+	http.SetCookie(w, cookie)
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]interface{}{
@@ -155,4 +182,60 @@ func HandlePosts(w http.ResponseWriter, r *http.Request) {
 	default:
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 	}
+}
+
+// validateSession checks if a session is valid and returns the user ID if it is
+func ValidateSession(r *http.Request) (int, error) {
+	cookie, err := r.Cookie("session_id")
+	if err != nil {
+		return 0, err
+	}
+
+	var userID int
+	err = db.QueryRow(`
+		SELECT user_id FROM sessions 
+		WHERE id = ? AND expires_at > CURRENT_TIMESTAMP`,
+		cookie.Value).Scan(&userID)
+	if err != nil {
+		return 0, err
+	}
+
+	return userID, nil
+}
+
+func HandleLogout(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	cookie, err := r.Cookie("session_id")
+	if err != nil {
+		http.Error(w, "No active session", http.StatusUnauthorized)
+		return
+	}
+
+	// Delete session from database
+	_, err = db.Exec("DELETE FROM sessions WHERE id = ?", cookie.Value)
+	if err != nil {
+		http.Error(w, "Error logging out", http.StatusInternalServerError)
+		return
+	}
+
+	// Clear the cookie
+	cookie = &http.Cookie{
+		Name:     "session_id",
+		Value:    "",
+		Expires:  time.Now().Add(-1 * time.Hour), // Expire immediately
+		HttpOnly: true,
+		Secure:   true,
+		SameSite: http.SameSiteStrictMode,
+		Path:     "/",
+	}
+	http.SetCookie(w, cookie)
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]string{
+		"message": "Logged out successfully",
+	})
 }
