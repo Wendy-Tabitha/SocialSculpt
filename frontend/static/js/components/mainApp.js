@@ -144,7 +144,7 @@ document.querySelector('.logout-btn').addEventListener('click', async (e) => {
 
         if (response.ok) {
             // Redirect to login page after successful logout
-            window.location.href = '/login';
+            window.location.href = '/';
         } else {
             console.error('Logout failed');
         }
