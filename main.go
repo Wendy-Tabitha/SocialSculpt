@@ -1,45 +1,48 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
-	"realtime-forum/backend/handlers"
-	"realtime-forum/backend/wbsocket"
-	// _ "github.com/mattn/go-sqlite3"
+	"socialsculpt/backend"
 )
 
 func main() {
-	// Initialize the database and create tables
-	handlers.InitDB()
+	// Initialize database
+	db, err := backend.InitDB()
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
 
-	// Create static file servers for different directories
-	staticFiles := http.FileServer(http.Dir("frontend/static"))
-	imageFiles := http.FileServer(http.Dir("frontend/static/img"))
-
-	// Handle static file routes
-	http.Handle("/static/", http.StripPrefix("/static/", staticFiles))
-	http.Handle("/img/", http.StripPrefix("/img/", imageFiles))
+	// Static files
+	fs := http.FileServer(http.Dir("frontend/static"))
+	http.Handle("/static/", http.StripPrefix("/static/", fs))
 
 	// API routes
-	http.HandleFunc("/", serveHome)
-	http.HandleFunc("/ws", wbsocket.HandleConnections)
-	http.HandleFunc("/api/register", handlers.HandleRegister)
-	http.HandleFunc("/api/login", handlers.HandleLogin)
-	http.HandleFunc("/api/logout", handlers.HandleLogout)
-	http.HandleFunc("/api/posts", handlers.HandlePosts)
+	http.HandleFunc("/api/register", backend.RegisterHandler)
+	http.HandleFunc("/api/login", backend.LoginHandler)
+	http.HandleFunc("/api/logout", backend.LogoutHandler)
+	http.HandleFunc("/api/ws", backend.WebsocketHandler)
+	http.HandleFunc("/api/check-session", backend.CheckSessionHandler)
+	http.HandleFunc("/api/posts", backend.GetPostsHandler)
+	http.HandleFunc("/api/user/profile", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodGet {
+			backend.UserProfileHandler(w, r)
+		} else if r.Method == http.MethodPut {
+			backend.UpdateUserProfileHandler(w, r)
+		} else if r.Method == http.MethodDelete {
+			backend.DeleteUserAccountHandler(w, r)
+		} else {
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
+	})
 
-	log.Println("Server starting on http://localhost:8080")
-	err := http.ListenAndServe(":8080", nil)
-	if err != nil {
-		log.Fatal("ListenAndServe: ", err)
-	}
-}
+	// Main template route
+	http.HandleFunc("/", backend.ServeTemplate)
 
-func serveHome(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/" {
-		http.Error(w, "Not found", http.StatusNotFound)
-		return
-	}
-	http.ServeFile(w, r, "frontend/templates/index.html")
+	port := ":8080"
+	fmt.Printf("Server starting on http://localhost%s\n", port)
+	log.Fatal(http.ListenAndServe(port, nil))
 }
