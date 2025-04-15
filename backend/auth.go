@@ -89,7 +89,14 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Create session
+	// Clear existing sessions for the user
+	_, err = GetDB().Exec("DELETE FROM sessions WHERE user_id = ?", user.ID)
+	if err != nil {
+		http.Error(w, "Error clearing previous sessions", http.StatusInternalServerError)
+		return
+	}
+
+	// Create new session
 	sessionID := uuid.New().String()
 	expiresAt := time.Now().Add(24 * time.Hour)
 
@@ -165,7 +172,7 @@ func CheckSessionHandler(w http.ResponseWriter, r *http.Request) {
 	err = GetDB().QueryRow("SELECT id, nickname, first_name, last_name, age, gender, email FROM users WHERE id = ?", session.UserID).
 		Scan(&user.ID, &user.Nickname, &user.FirstName, &user.LastName, &user.Age, &user.Gender, &user.Email)
 	if err != nil {
-		http.Error(w, "User not found", http.StatusUnauthorized)
+		http.Error(w, "User  not found", http.StatusUnauthorized)
 		return
 	}
 
