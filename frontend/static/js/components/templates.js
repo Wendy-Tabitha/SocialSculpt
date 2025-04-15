@@ -3,7 +3,7 @@ const Templates = {
         <div class="auth-container">
             <div class="auth-form login-form">
                 <h2>Login</h2>
-                <form id="login-form" onsubmit="return Auth.handleLogin(event)">
+                <form id="login-form" >
                     <div class="form-group">
                         <input type="text" name="identifier" placeholder="Email or Nickname" required>
                     </div>
@@ -21,7 +21,7 @@ const Templates = {
         <div class="auth-container">
             <div class="auth-form register-form">
                 <h2>Register</h2>
-                <form id="register-form" onsubmit="return Auth.handleRegister(event)">
+                <form id="register-form">
                     <div class="form-group">
                         <input type="text" name="nickname" placeholder="Nickname" required>
                     </div>
