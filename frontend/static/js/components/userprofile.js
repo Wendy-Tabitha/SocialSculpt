@@ -189,7 +189,6 @@ const UserProfile = {
                                     <option value="">Select Gender</option>
                                     <option value="male" ${userData.gender === 'male' ? 'selected' : ''}>Male</option>
                                     <option value="female" ${userData.gender === 'female' ? 'selected' : ''}>Female</option>
-                                    <option value="other" ${userData.gender === 'other' ? 'selected' : ''}>Other</option>
                                 </select>
                             </div>
                             <div class="form-actions">

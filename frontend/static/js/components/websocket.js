@@ -1,11 +1,18 @@
-const WebSocket = {
+const WebSocketManager = {
     socket: null,
     reconnectAttempts: 0,
     maxReconnectAttempts: 5,
-    reconnectDelay: 1000, // Start with 1 second delay
+    reconnectDelay: 1000,
+    enableReconnection: true,
 
     connect() {
-        if (this.socket?.readyState === WebSocket.OPEN) {
+
+        if (!this.enableReconnection) {
+            console.log('WebSocket reconnection is disabled during development.');
+            return;
+        }
+
+        if (this.socket && (this.socket.readyState === WebSocket.OPEN || this.socket.readyState === WebSocket.CONNECTING)) {
             return;
         }
 
@@ -18,12 +25,19 @@ const WebSocket = {
             this.reconnectDelay = 1000;
         };
 
-        this.socket.onclose = (event) => {
-            if (!event.wasClean) {
-                console.log('WebSocket connection lost');
-                this.reconnect();
+        this.socket.onclose = () => {
+            console.log('WebSocket disconnected. Attempting to reconnect...');
+            if (this.reconnectAttempts < this.maxReconnectAttempts) {
+                setTimeout(() => {
+                    this.connect();
+                }, this.reconnectDelay);
+                this.reconnectDelay = Math.min(this.reconnectDelay * 2, 30000); // Cap at 30 seconds
+                this.reconnectAttempts++;
+            } else {
+                console.log('Max reconnection attempts reached. Stopping reconnection.');
             }
         };
+
 
         this.socket.onerror = (error) => {
             console.error('WebSocket error:', error);
@@ -49,7 +63,7 @@ const WebSocket = {
             console.log(`Attempting to reconnect (${this.reconnectAttempts + 1}/${this.maxReconnectAttempts})`);
             this.connect();
             this.reconnectAttempts++;
-            this.reconnectDelay *= 2; // Exponential backoff
+            this.reconnectDelay *= 2;
         }, this.reconnectDelay);
     },
 
@@ -165,4 +179,8 @@ const WebSocket = {
             badge.classList.remove('hidden');
         }
     }
-}; 
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+    WebSocketManager.connect();
+});
