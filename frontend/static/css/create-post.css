@@ -73,12 +73,9 @@
 
 .cancel-post {
     color: #666;
+    background: #f0f0f0;
     cursor: pointer;
     transition: all 0.2s ease;
-}
-
-.cancel-post:hover {
-    background: #f0f0f0;
 }
 
 .btn-primary {
