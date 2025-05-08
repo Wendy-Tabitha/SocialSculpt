@@ -1,6 +1,8 @@
 package backend
 
 import (
+	"encoding/json"
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -110,4 +112,34 @@ func ServeTemplate(w http.ResponseWriter, r *http.Request) {
 		log.Printf("Error executing template: %v", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 	}
+}
+
+// FetchUserHandler retrieves details of a specific user
+func FetchUserHandler(w http.ResponseWriter, r *http.Request, userId string) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	user, err := FetchUser(userId)
+	if err != nil {
+		http.Error(w, "Failed to fetch user details", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(user)
+}
+
+// FetchUser retrieves user details from the database
+func FetchUser(userId string) (User, error) {
+	var user User
+	err := db.QueryRow("SELECT id, nickname, first_name, last_name, age, gender, email FROM users WHERE id = ?", userId).
+		Scan(&user.ID, &user.Nickname, &user.FirstName, &user.LastName, &user.Age, &user.Gender, &user.Email)
+	if err != nil {
+		fmt.Println("You screwed up: ", err)
+		return User{}, err
+	}
+
+	return user, nil
 }
