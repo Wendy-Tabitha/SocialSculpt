@@ -11,6 +11,9 @@ const App = {
                     <span class="logo-text">Forum</span>
                 </div>
                 <div class="header-right">
+                    <button class="create-post-btn">
+                        <i class="fas fa-plus"></i> Create Post
+                    </button>
                     <div class="icon-button messages-icon">
                         <span class="notification-badge messages-count hidden">0</span>
                         <i class="fas fa-envelope"></i>
@@ -34,6 +37,12 @@ const App = {
                                 <a href="#" data-category="all" class="active">
                                     <i class="fas fa-home"></i>
                                     <span>All Posts</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" data-category="my-posts">
+                                    <i class="fas fa-user-edit"></i>
+                                    <span>My Posts</span>
                                 </a>
                             </li>
                             <li>
@@ -93,9 +102,6 @@ const App = {
                         </ul>
                     </nav>
                     <div class="btns">
-                    <button class="create-post-btn">
-                        <i class="fas fa-plus"></i> Create Post
-                    </button>
                     <button class="logout-btn">
                         <i class="fas fa-sign-out-alt"></i> Logout
                     </button>
@@ -118,13 +124,14 @@ const App = {
                 <!-- Right Sidebar -->
                 <aside class="sidebar right-sidebar">
                     <div class="requests-section">
-                        <h3>Requests</h3>
+                        <h3 style="margin: 10px;">Requests</h3>
                         <div id="friend-requests">
                             <!-- Friend requests will be injected here -->
                         </div>
                     </div>
                     <div class="contacts-section">
-                        <h3>Contacts</h3>
+                    <hr/>
+                        <h3 style="margin: 10px; font-weight: bold">People</h3>
                         <div id="online-contacts">
                             <!-- Online contacts will be injected here -->
                         </div>
@@ -138,7 +145,7 @@ const App = {
 
         // Initialize other components
         this.initializeComponents();
-        
+
         // Initialize user profile
         await UserProfile.updateUserProfileData();
     },
@@ -208,4 +215,5 @@ const App = {
 // Initialize the app when the DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     App.init();
+    // WebSocketManager.connect();
 }); 
