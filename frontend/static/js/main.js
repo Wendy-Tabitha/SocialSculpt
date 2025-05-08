@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Handle network status
     window.addEventListener('online', () => {
         console.log('Connection restored');
-        WebSocket.connect();
+        WebSocketManagerconnect();
         // You can implement a toast notification system here
     });
 
@@ -25,12 +25,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // Handle visibility change
     document.addEventListener('visibilitychange', () => {
         if (document.visibilityState === 'visible') {
-            WebSocket.connect();
+            WebSocketManagerconnect();
         }
     });
 
     // Handle beforeunload
     window.addEventListener('beforeunload', () => {
-        WebSocket.disconnect();
+        WebSocketManagerdisconnect();
     });
 }); 
